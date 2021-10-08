@@ -4,6 +4,8 @@ import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.Collections;
 import processing.core.PApplet;
+import java.awt.event.KeyEvent;
+
 
 //when in doubt, consult the Processsing reference: https://processing.org/reference/
 
@@ -18,6 +20,8 @@ int hits = 0; //number of successful clicks
 int misses = 0; //number of missed clicks
 Robot robot; //initialized in setup 
 
+
+int offset = 53;
 int numRepeats = 1; //sets the number of times each button repeats in the test
 
 void setup()
@@ -49,6 +53,8 @@ void setup()
   System.out.println("trial order: " + trials);
   
   surface.setLocation(0,0);// put window in top left corner of screen (doesn't always work)
+  
+  robot.mouseMove(getButtonLocation(0).x + buttonSize/2, getButtonLocation(0).y + offset+ buttonSize/2);
 }
 
 
@@ -152,7 +158,22 @@ void mouseDragged()
 
 void keyPressed() 
 {
-  //can use the keyboard if you wish
-  //https://processing.org/reference/keyTyped_.html
-  //https://processing.org/reference/keyCode.html
+  if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
+    if (mouseY > margin + buttonSize) {
+      robot.mouseMove(mouseX, mouseY+offset-padding-buttonSize);
+    }
+    
+  } else if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
+    if (mouseY <= margin + buttonSize*3 + padding*3) {
+      robot.mouseMove(mouseX, mouseY+offset+padding+buttonSize);
+    }
+  } else if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
+    if (mouseX > margin + buttonSize) {
+      robot.mouseMove(mouseX - padding - buttonSize, mouseY+offset);
+    }
+  } else if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
+    if (mouseX <= margin + buttonSize*3 + padding*3) {
+      robot.mouseMove(mouseX + padding + buttonSize, mouseY+offset);
+    }
+  }
 }
