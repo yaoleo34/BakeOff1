@@ -22,6 +22,9 @@ Robot robot; //initialized in setup
 
 
 int offset = 53;
+int flashtime = 0;
+int flashinterval = 40;
+
 int numRepeats = 1; //sets the number of times each button repeats in the test
 
 void setup()
@@ -137,7 +140,20 @@ void drawButton(int i)
   Rectangle bounds = getButtonLocation(i);
 
   if (trials.get(trialNum) == i) // see if current button is the target
-    fill(0, 255, 255); // if so, fill cyan
+  {
+    if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height))
+    {
+      fill(0, 255, 0);
+    }
+    else 
+    {
+      if (flashtime % flashinterval < flashinterval / 2)
+        fill(255, 0, 0); // if so, fill red
+      else
+        fill(200);
+      flashtime += 1;
+    }
+  }
   else
     fill(200); // if not, fill gray
 
