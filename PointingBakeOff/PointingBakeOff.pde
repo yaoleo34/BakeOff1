@@ -21,7 +21,7 @@ int misses = 0; //number of missed clicks
 Robot robot; //initialized in setup 
 
 
-int offset = 53;
+int offset = 45;
 int flashtime = 0;
 int flashinterval = 40;
 
