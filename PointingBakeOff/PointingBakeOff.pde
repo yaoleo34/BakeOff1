@@ -63,8 +63,7 @@ void setup()
 
 void draw()
 {
-  background(0); //set background to black
-
+  background(50); //set background to black
   if (trialNum >= trials.size()) //check to see if test is over
   {
     float timeTaken = (finishTime-startTime) / 1000f;
@@ -140,6 +139,7 @@ void drawButton(int i)
   Rectangle bounds = getButtonLocation(i);
 
   if (trials.get(trialNum) == i) // see if current button is the target
+
   {
     if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height))
     {
@@ -174,6 +174,7 @@ void mouseDragged()
 
 void keyPressed() 
 {
+
   if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
     if (mouseY > margin + buttonSize) {
       robot.mouseMove(mouseX, mouseY+offset-padding-buttonSize);
