@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import processing.core.PApplet;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 
 
 //when in doubt, consult the Processsing reference: https://processing.org/reference/
@@ -19,7 +20,7 @@ int finishTime = 0; //records the time of the final click
 int hits = 0; //number of successful clicks
 int misses = 0; //number of missed clicks
 Robot robot; //initialized in setup 
-
+HashMap<Integer, Integer> keys;
 
 int offset = 53;
 int flashtime = 0;
@@ -56,8 +57,29 @@ void setup()
   System.out.println("trial order: " + trials);
   
   surface.setLocation(0,0);// put window in top left corner of screen (doesn't always work)
-  
+  keys = new HashMap<Integer, Integer>();
+  setUpMap();
   robot.mouseMove(getButtonLocation(0).x + buttonSize/2, getButtonLocation(0).y + offset+ buttonSize/2);
+}
+
+void setUpMap() {
+  keys.put(KeyEvent.VK_7, 0); 
+  keys.put(KeyEvent.VK_8, 1);
+  keys.put(KeyEvent.VK_9, 2);
+  keys.put(KeyEvent.VK_0, 3);
+  keys.put(KeyEvent.VK_U, 4);
+  keys.put(KeyEvent.VK_I, 5);
+  keys.put(KeyEvent.VK_O, 6);
+  keys.put(KeyEvent.VK_P, 7);
+  keys.put(KeyEvent.VK_J, 8);
+  keys.put(KeyEvent.VK_K, 9);
+  keys.put(KeyEvent.VK_L, 10);
+  keys.put(KeyEvent.VK_COLON,11);
+  keys.put(KeyEvent.VK_M, 12);
+  keys.put(KeyEvent.VK_COMMA, 13);
+  keys.put(KeyEvent.VK_PERIOD, 14);
+  keys.put(KeyEvent.VK_SLASH, 15);
+  
 }
 
 
@@ -88,6 +110,18 @@ void draw()
 
   fill(255, 255, 0, 250); // set fill color to translucent yellow
   ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
+  drawLabels();
+}
+
+void drawLabels() {
+    fill(0);
+    String[] labels = {"7", "8", "9", "0", "U", "I", "O", "P", "J", "K", "L", ";", "M", "<", ">", "?"};
+    for (int i = 0; i < 16; i++) {
+      int x = (i % 4) * (padding + buttonSize) + margin + buttonSize/2;
+      int y = (i / 4) * (padding + buttonSize) + margin + buttonSize/2 + 5;
+      text(labels[i], x, y); 
+    }
+    
 }
 
 void mousePressed() // test to see if hit was in target!
@@ -174,7 +208,8 @@ void mouseDragged()
 
 void keyPressed() 
 {
-
+  
+  
   if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
     if (mouseY > margin + buttonSize) {
       robot.mouseMove(mouseX, mouseY+offset-padding-buttonSize);
@@ -191,6 +226,11 @@ void keyPressed()
   } else if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
     if (mouseX <= margin + buttonSize*3 + padding*3) {
       robot.mouseMove(mouseX + padding + buttonSize, mouseY+offset);
-    }
+    } 
+  } else {
+      int i = keys.get(keyCode);
+      int x = (i % 4) * (padding + buttonSize) + margin + buttonSize/2;
+      int y = (i / 4) * (padding + buttonSize) + margin + buttonSize/2 + 5;
+      robot.mouseMove(x, y + offset);
   }
 }
