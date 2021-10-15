@@ -230,7 +230,7 @@ void keyPressed()
   } else {
       int i = keys.get(keyCode);
       int x = (i % 4) * (padding + buttonSize) + margin + buttonSize/2;
-      int y = (i / 4) * (padding + buttonSize) + margin + buttonSize/2 + 5;
+      int y = (i / 4) * (padding + buttonSize) + margin + buttonSize/2;
       robot.mouseMove(x, y + offset);
   }
 }
