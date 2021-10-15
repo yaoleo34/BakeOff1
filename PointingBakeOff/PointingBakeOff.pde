@@ -74,7 +74,7 @@ void setUpMap() {
   keys.put(KeyEvent.VK_J, 8);
   keys.put(KeyEvent.VK_K, 9);
   keys.put(KeyEvent.VK_L, 10);
-  keys.put(KeyEvent.VK_COLON,11);
+  keys.put(KeyEvent.VK_SEMICOLON,11);
   keys.put(KeyEvent.VK_M, 12);
   keys.put(KeyEvent.VK_COMMA, 13);
   keys.put(KeyEvent.VK_PERIOD, 14);
