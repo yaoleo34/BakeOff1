@@ -4,6 +4,8 @@ import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.Collections;
 import processing.core.PApplet;
+import java.awt.event.KeyEvent;
+
 
 //when in doubt, consult the Processsing reference: https://processing.org/reference/
 
@@ -17,6 +19,9 @@ int finishTime = 0; //records the time of the final click
 int hits = 0; //number of successful clicks
 int misses = 0; //number of missed clicks
 Robot robot; //initialized in setup 
+
+
+int offset = 53;
 
 int numRepeats = 1; //sets the number of times each button repeats in the test
 
@@ -49,12 +54,14 @@ void setup()
   System.out.println("trial order: " + trials);
   
   surface.setLocation(0,0);// put window in top left corner of screen (doesn't always work)
+  
+  robot.mouseMove(getButtonLocation(0).x + buttonSize/2, getButtonLocation(0).y + offset+ buttonSize/2);
 }
 
 
 void draw()
 {
-  background(0); //set background to black
+  background(50); //set background to dark grey
 
   if (trialNum >= trials.size()) //check to see if test is over
   {
@@ -74,12 +81,25 @@ void draw()
 
   fill(255); //set fill color to white
   text((trialNum + 1) + " of " + trials.size(), 40, 20); //display what trial the user is on
+  int textOffset = 20;
+  float startText = height / 10;
+  text("Instructions: Move the mouse cursor to the red square and left click in order to select the square.", width / 2, startText); 
+  text("You can do this either by moving the mouse manually", width / 2, startText + textOffset);
+  text("or by using the WASD keys to navigate to the neighboring squares of the square the cursor is on.", width / 2, startText + 2 * textOffset);
+  text("You will be evaluated on both speed and accuracy.", width / 2, startText + 3 * textOffset);
+  text("The timer will start upon the first selection of a square.", width / 2, startText + 4 * textOffset);
 
   for (int i = 0; i < 16; i++)// for all button
     drawButton(i); //draw button
 
-  fill(255, 0, 0, 200); // set fill color to translucent red
-  ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
+  // Draw line from cursor to target square
+  Rectangle targetBounds = getButtonLocation(trials.get(trialNum));
+  strokeWeight(5);
+  stroke(255, 255, 0);
+  line(mouseX, mouseY, targetBounds.x + targetBounds.width / 2, targetBounds.y + targetBounds.height / 2);
+  noStroke();
+  //fill(255, 255, 0, 250); // set fill color to translucent yellow
+  //ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
 }
 
 void mousePressed() // test to see if hit was in target!
@@ -131,7 +151,12 @@ void drawButton(int i)
   Rectangle bounds = getButtonLocation(i);
 
   if (trials.get(trialNum) == i) // see if current button is the target
-    fill(0, 255, 255); // if so, fill cyan
+  {
+    if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height))
+      fill(0, 255, 0);
+    else 
+      fill(255, 0, 0);
+  }
   else
     fill(200); // if not, fill gray
 
@@ -152,7 +177,22 @@ void mouseDragged()
 
 void keyPressed() 
 {
-  //can use the keyboard if you wish
-  //https://processing.org/reference/keyTyped_.html
-  //https://processing.org/reference/keyCode.html
+  if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
+    if (mouseY > margin + buttonSize) {
+      robot.mouseMove(mouseX, mouseY+offset-padding-buttonSize);
+    }
+    
+  } else if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
+    if (mouseY <= margin + buttonSize*3 + padding*3) {
+      robot.mouseMove(mouseX, mouseY+offset+padding+buttonSize);
+    }
+  } else if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
+    if (mouseX > margin + buttonSize) {
+      robot.mouseMove(mouseX - padding - buttonSize, mouseY+offset);
+    }
+  } else if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
+    if (mouseX <= margin + buttonSize*3 + padding*3) {
+      robot.mouseMove(mouseX + padding + buttonSize, mouseY+offset);
+    }
+  }
 }
