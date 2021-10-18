@@ -92,7 +92,7 @@ void draw()
   for (int i = 0; i < 16; i++)// for all button
     drawButton(i); //draw button
 
-  // Draw arrow from cursor to target square
+  // Draw line from cursor to target square
   Rectangle targetBounds = getButtonLocation(trials.get(trialNum));
   strokeWeight(5);
   stroke(255, 255, 0);
