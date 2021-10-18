@@ -21,9 +21,7 @@ int misses = 0; //number of missed clicks
 Robot robot; //initialized in setup 
 
 
-int offset = 45;
-int flashtime = 0;
-int flashinterval = 40;
+int offset = 53;
 
 int numRepeats = 1; //sets the number of times each button repeats in the test
 
@@ -63,7 +61,7 @@ void setup()
 
 void draw()
 {
-  background(0); //set background to black
+  background(50); //set background to dark grey
 
   if (trialNum >= trials.size()) //check to see if test is over
   {
@@ -83,12 +81,25 @@ void draw()
 
   fill(255); //set fill color to white
   text((trialNum + 1) + " of " + trials.size(), 40, 20); //display what trial the user is on
+  int textOffset = 20;
+  float startText = height / 10;
+  text("Instructions: Move the mouse cursor to the red square and left click in order to select the square.", width / 2, startText); 
+  text("You can do this either by moving the mouse manually", width / 2, startText + textOffset);
+  text("or by using the WASD keys to navigate to the neighboring squares of the square the cursor is on.", width / 2, startText + 2 * textOffset);
+  text("You will be evaluated on both speed and accuracy.", width / 2, startText + 3 * textOffset);
+  text("The timer will start upon the first selection of a square.", width / 2, startText + 4 * textOffset);
 
   for (int i = 0; i < 16; i++)// for all button
     drawButton(i); //draw button
 
-  fill(255, 255, 0, 250); // set fill color to translucent yellow
-  ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
+  // Draw arrow from cursor to target square
+  Rectangle targetBounds = getButtonLocation(trials.get(trialNum));
+  strokeWeight(5);
+  stroke(255, 255, 0);
+  line(mouseX, mouseY, targetBounds.x + targetBounds.width / 2, targetBounds.y + targetBounds.height / 2);
+  noStroke();
+  //fill(255, 255, 0, 250); // set fill color to translucent yellow
+  //ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
 }
 
 void mousePressed() // test to see if hit was in target!
@@ -142,17 +153,9 @@ void drawButton(int i)
   if (trials.get(trialNum) == i) // see if current button is the target
   {
     if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height))
-    {
       fill(0, 255, 0);
-    }
     else 
-    {
-      if (flashtime % flashinterval < flashinterval / 2)
-        fill(255, 0, 0); // if so, fill red
-      else
-        fill(200);
-      flashtime += 1;
-    }
+      fill(255, 0, 0);
   }
   else
     fill(200); // if not, fill gray
