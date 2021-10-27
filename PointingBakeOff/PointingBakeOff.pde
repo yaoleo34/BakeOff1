@@ -21,9 +21,15 @@ int misses = 0; //number of missed clicks
 Robot robot; //initialized in setup 
 
 
-int offset = 53;
+int offset = 45;
 
-int numRepeats = 1; //sets the number of times each button repeats in the test
+int numRepeats = 20; //sets the number of times each button repeats in the test
+
+Table table;
+int origX;
+int origY;
+int time;
+int id = 0;
 
 void setup()
 {
@@ -42,6 +48,17 @@ void setup()
   catch (AWTException e) {
     e.printStackTrace();
   }
+  
+  table = new Table();
+  table.addColumn("trial num");
+  table.addColumn("id");
+  table.addColumn("original x position");
+  table.addColumn("original y position");
+  table.addColumn("target x position");
+  table.addColumn("target y position");
+  table.addColumn("target width");
+  table.addColumn("time taken");
+  table.addColumn("accuracy");
 
   //===DON'T MODIFY MY RANDOM ORDERING CODE==
   for (int i = 0; i < 16; i++) //generate list of targets and randomize the order
@@ -56,6 +73,8 @@ void setup()
   surface.setLocation(0,0);// put window in top left corner of screen (doesn't always work)
   
   robot.mouseMove(getButtonLocation(0).x + buttonSize/2, getButtonLocation(0).y + offset+ buttonSize/2);
+  origX = getButtonLocation(0).x + buttonSize/2;
+  origY = getButtonLocation(0).y + offset+ buttonSize/2;
 }
 
 
@@ -76,6 +95,7 @@ void draw()
     text("Total time taken: " + timeTaken + " sec", width / 2, height / 2 + 80);
     text("Average time for each button: " + nf((timeTaken)/(float)(hits+misses),0,3) + " sec", width / 2, height / 2 + 100);
     text("Average time for each button + penalty: " + nf(((timeTaken)/(float)(hits+misses) + penalty),0,3) + " sec", width / 2, height / 2 + 140);
+    saveTable(table, "data/trials.csv");
     return; //return, nothing else to do now test is over
   }
 
@@ -107,8 +127,10 @@ void mousePressed() // test to see if hit was in target!
   if (trialNum >= trials.size()) //if task is over, just return
     return;
 
-  if (trialNum == 0) //check if first click, if so, start timer
+  if (trialNum == 0) {//check if first click, if so, start timer
     startTime = millis();
+    time = startTime;
+  }
 
   if (trialNum == trials.size() - 1) //check if final click
   {
@@ -119,9 +141,11 @@ void mousePressed() // test to see if hit was in target!
 
   Rectangle bounds = getButtonLocation(trials.get(trialNum));
 
+  int accuracy = 0;
  //check to see if mouse cursor is inside button 
   if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height)) // test to see if hit was within bounds
   {
+    accuracy = 1;
     System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
     hits++; 
   } 
@@ -130,8 +154,41 @@ void mousePressed() // test to see if hit was in target!
     System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
     misses++;
   }
-
+  
   trialNum++; //Increment trial number
+  
+  int currtime = millis();
+  
+  TableRow row = table.addRow();
+  row.setInt("trial num", trialNum);
+  print(trialNum);
+  print(",");
+  row.setInt("id", id);
+  print(id);
+  print(",");
+  row.setInt("original x position", origX);
+  print(origX);
+  print(",");
+  row.setInt("original y position", origY);
+  print(origY);
+  print(",");
+  row.setInt("target x position", bounds.x + bounds.width / 2);
+  print(bounds.x + bounds.width / 2);
+  print(",");
+  row.setInt("target y position", bounds.y + bounds.width / 2);
+  print(bounds.y + bounds.width / 2);
+  print(",");
+  row.setInt("target width", buttonSize);
+  print(buttonSize);
+  print(",");
+  row.setFloat("time taken", (currtime - time) / 1000f);
+  print((currtime - time) / 1000f);
+  print(",");
+  row.setInt("accuracy", accuracy);
+  println(accuracy);
+  time = currtime;
+  origX = mouseX;
+  origY = mouseY;
 
   //in this example code, we move the mouse back to the middle
   //robot.mouseMove(width/2, (height)/2); //on click, move cursor to roughly center of window!
